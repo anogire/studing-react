@@ -1,0 +1,13 @@
+.Footer-main{
+  background-color: #262626;
+  padding-top: 20px;
+  padding-bottom: 50px;
+}
+.Footer-greeting-text {
+  font-family: 'Redressed', cursive;
+  font-size: 50px;
+  text-transform: capitalize;
+  color: #e6dfec;
+  display: flex;
+  justify-content: center;
+}

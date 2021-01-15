@@ -1,12 +1,9 @@
-import year from '../img/2021-1.jpg';
-import '../styles/Header.css';
+import '../styles/header.scss';
 
-function Header() {
+export function Header() {
   return (
     <header className="container-fluid Header-main">
-      <img src={year} width="524" height="329" alt="Happy New Year 2021" />
+      <span className="main-text">Домашнее задание №2</span>
     </header>
   );
 }
-
-export default Header;

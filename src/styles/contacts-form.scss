@@ -1,0 +1,28 @@
+@import '~bootstrap/scss/bootstrap.scss';
+
+.ContactsForm-section {
+  width: 100%;
+  padding-top: 30px;
+  padding-left: 0;
+  @include media-breakpoint-up(md) {
+    width: 70%;
+    padding-top: 0;
+    padding-left: 20px;
+  }
+}
+.main-input {
+  display: block;
+  width: 100%;
+}
+.buttons-group {
+  display: flex;
+}
+.main-button {
+  width: 50%;
+}
+.not-valid {
+  border: 2px solid red;
+}
+.not-valid-alert {
+  display: none;
+}

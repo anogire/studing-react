@@ -1,0 +1,15 @@
+@import '~bootstrap/scss/bootstrap.scss';
+
+.Main-main{
+  background-color: #fff;
+  padding-top: 50px;
+  padding-bottom: 100px;
+  display: flex;
+  flex-direction: column;
+  @include media-breakpoint-up(md) {
+    flex-direction: row;
+  }
+}
+.wrapper {
+  width: 100%;
+}

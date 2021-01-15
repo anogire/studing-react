@@ -1,16 +1,48 @@
 import React from 'react';
-import '../styles/Main.css';
+import '../styles/main.scss';
+import { Contacts } from './Contacts';
+import { ContactsForm } from './ContactsForm';
 
-class Main extends React.Component {
+export class Main extends React.Component {
+  state = {
+    isShowForm: false,
+    contact: [{
+      name: 'Иван',
+      surName: 'Иванов',
+      phone: '+380 (50) 123-45-67'
+    }]
+  };
+
   render() {
     return (
       <main className="container-fluid Main-main">
-        <span className="Main-greeting-text">
-          we wish you a merry christmas
-        </span>
+        <div className="wrapper">
+          <Contacts contact={this.state.contact} />
+          <button type="button" onClick={this.toggleForm} disabled={this.state.isShowForm}
+            className="btn btn-primary mt-3">
+            Добавить контакт
+          </button>
+        </div>
+        {this.state.isShowForm ?
+          <ContactsForm updateData={this.updateData} addContact={this.addContact} /> :
+          null}
       </main>
     );
   }
-}
 
-export default Main;
+  toggleForm = () => {
+    this.setState({
+      isShowForm: !this.state.isShowForm
+    });
+  }
+
+  updateData = (value) => {
+    this.setState({ isShowForm: !value });
+  }
+
+  addContact = (value) => {
+    this.setState({
+      contact: [...this.state.contact, value]
+    })
+  }
+}

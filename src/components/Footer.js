@@ -1,10 +1,9 @@
-import '../styles/Footer.css';
+import '../styles/footer.scss';
 
-const Footer = () =>
-  <footer className="container-fluid Footer-main">
-    <span className="Footer-greeting-text">
-      and a happy new year!
-    </span>
-  </footer>
-
-export default Footer;
+export function Footer() {
+  return (
+    <footer className="container-fluid Footer-main">
+      <span className="main-text">Книга контактов</span>
+    </footer>
+  );
+}

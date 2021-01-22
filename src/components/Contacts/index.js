@@ -1,9 +1,9 @@
 import React from 'react';
-import '../styles/main.scss';
-import { Contacts } from './Contacts';
-import { ContactsForm } from './ContactsForm';
+import './style.scss';
+import { ContactsTable } from '../ContactsTable';
+import { ContactsForm } from '../ContactsForm';
 
-export class Main extends React.Component {
+export class Contacts extends React.Component {
   state = {
     isShowForm: false,
     contact: [{
@@ -15,16 +15,16 @@ export class Main extends React.Component {
 
   render() {
     return (
-      <main className="container-fluid Main-main">
-        <div className="wrapper">
-          <Contacts contact={this.state.contact} />
+      <main className="container-fluid Contacts-main">
+        <div className="Contacts-wrapper">
+          <ContactsTable contact={this.state.contact} />
           <button type="button" onClick={this.toggleForm} disabled={this.state.isShowForm}
             className="btn btn-primary mt-3">
             Добавить контакт
           </button>
         </div>
         {this.state.isShowForm ?
-          <ContactsForm updateData={this.updateData} addContact={this.addContact} /> :
+          <ContactsForm addContact={this.addContact} /> :
           null}
       </main>
     );
@@ -36,13 +36,12 @@ export class Main extends React.Component {
     });
   }
 
-  updateData = (value) => {
-    this.setState({ isShowForm: !value });
-  }
-
   addContact = (value) => {
-    this.setState({
-      contact: [...this.state.contact, value]
-    })
+    if (value) {
+      this.setState({
+        contact: [...this.state.contact, value]
+      })
+    }
+    this.toggleForm();
   }
 }

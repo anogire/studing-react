@@ -1,9 +1,9 @@
-import '../styles/header.scss';
+import './style.scss';
 
 export function Header() {
   return (
     <header className="container-fluid Header-main">
-      <span className="main-text">Домашнее задание №2</span>
+      <span className="main-text">Домашнее задание №3</span>
     </header>
   );
 }

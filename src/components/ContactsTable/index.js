@@ -1,13 +1,13 @@
 import React from 'react';
-import '../styles/contacts.scss';
+import './style.scss';
 
-export class Contacts extends React.Component {
+export class ContactsTable extends React.Component {
 
   render() {
     const cells = this.props.contact;
 
     return (
-      <section className="Contacts-section">
+      <section className="ContactsTable-section">
         <h2 className="main-heading">Книга контактов</h2>
         <table className="table table-striped">
           <thead className="thead-dark">

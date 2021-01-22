@@ -6,14 +6,16 @@ import ReactDOM from 'react-dom';
 import './index.scss';
 import reportWebVitals from './reportWebVitals';
 
+
 import { Header } from './components/Header';
-import { Main } from './components/Main';
 import { Footer } from './components/Footer';
+import { CreditCard } from './components/CreditCard';
+//import { Contacts } from './components/Contacts';
 
 ReactDOM.render(
   <React.StrictMode>
     <Header />
-    <Main />
+    <CreditCard />
     <Footer />
   </React.StrictMode>,
   document.getElementById('root')

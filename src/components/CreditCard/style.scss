@@ -1,0 +1,60 @@
+@import '~bootstrap/scss/bootstrap.scss';
+
+.CreditCard-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 100px 0;
+}
+
+.CreditCard-form {
+  width: 560px;
+  height: 350px;
+  border-radius: 10px;
+  background: url('./img/credit-card.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.CreditCard-number {
+  position: absolute;
+  left: 5%;
+  bottom: 25%;
+}
+.CreditCard-button {
+  position: absolute;
+  left: 5%;
+  bottom: 5%;
+  padding: 5px 10px;
+  border: 1px solid #858585;
+  border-radius: 4px;
+  background-color: #cecece;
+  &:hover,
+  &:focus {
+    background-color: #fff;
+    outline: none;
+  }
+  &:active {
+    background-color: #dddddd;
+    outline: none;
+  }
+}
+
+.CreditCard-input { 
+  font-size: 20px;
+  padding: 3px 10px;
+  margin-right: 5px;
+  border: 1px solid #858585;
+  border-radius: 4px;
+  background-color: #fff;
+  -moz-appearance: textfield;
+  &:hover,
+  &:focus {
+    outline-color: #858585;
+  }
+}
+.CreditCard-input::-webkit-inner-spin-button { 
+  display: none;
+}

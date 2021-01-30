@@ -9,13 +9,13 @@ import reportWebVitals from './reportWebVitals';
 
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import { CreditCard } from './components/CreditCard';
-//import { Contacts } from './components/Contacts';
+//import { CreditCard } from './components/CreditCard';
+import { Contacts } from './components/Contacts';
 
 ReactDOM.render(
   <React.StrictMode>
     <Header />
-    <CreditCard />
+    <Contacts />
     <Footer />
   </React.StrictMode>,
   document.getElementById('root')

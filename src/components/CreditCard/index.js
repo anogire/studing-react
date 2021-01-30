@@ -44,7 +44,6 @@ export class CreditCard extends React.Component {
     }
     if (curRef.length === 0 && i > 0) {
       this.getFocus(this.refInput[i - 1]);
-      this.cutValue(this.refInput[i - 1]);
     }
     if (curRef.length === 4 && i < 3) {
       this.getFocus(this.refInput[i + 1]);

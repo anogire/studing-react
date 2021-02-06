@@ -3,20 +3,23 @@
 //import 'bootstrap/dist/js/bootstrap.bundle.min';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider as ReduxProvider } from 'react-redux';
+import { store } from './store';
 import './index.scss';
 import reportWebVitals from './reportWebVitals';
 
 
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-//import { CreditCard } from './components/CreditCard';
-import { Contacts } from './components/Contacts';
+import ToDoList from './components/ToDoList';
 
 ReactDOM.render(
   <React.StrictMode>
-    <Header />
-    <Contacts />
-    <Footer />
+    <ReduxProvider store={store}>
+      <Header />
+      <ToDoList />
+      <Footer />
+    </ReduxProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

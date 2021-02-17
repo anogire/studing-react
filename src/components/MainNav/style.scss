@@ -1,0 +1,15 @@
+@import '~bootstrap/scss/bootstrap.scss';
+
+.MainNav-section {
+  padding: 20px 30px;
+}
+.MainNav-nav {
+  display: flex;
+  flex-direction: row;
+  @include media-breakpoint-up(sm) {
+    flex-direction: column;
+  }
+}
+.nav-link {
+  margin-bottom: 10px;
+}

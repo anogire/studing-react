@@ -1,69 +1,14 @@
-import { createStore } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import reduxThunk from 'redux-thunk';
 
-const emptyTask = {
-  id: 0,
-  text: '',
-  isAdded: true
-}
+import { contactFormReducer } from './contactForm';
+import { contactsReducer } from './contacts';
 
-function reducer(state, action) {
-  let todoList = [...state.todoList];
+const reducer = combineReducers({
+  data: contactFormReducer,
+  contacts: contactsReducer
+});
 
-  switch (action.type) {
-    case 'ITEM_ADD':
-      todoList.push({
-        description: action.text,
-        done: false
-      });
-      return {
-        ...state,
-        todoList,
-        currentTask: emptyTask
-      };
-    case 'ITEM_EDIT':
-      return {
-        ...state,
-        currentTask: {
-          id: action.id,
-          text: state.todoList[action.id].description,
-          isAdded: false
-        }
-      };
-    case 'ITEM_UPDATE':
-      todoList[state.currentTask.id].description = action.text;
-      return {
-        ...state,
-        todoList,
-        currentTask: emptyTask
-      };
-    case 'ITEM_DELETE':
-      todoList.splice(action.id, 1);
-      let newId = state.currentTask.id;
-      if (newId >= action.id) newId--;
-      return {
-        ...state,
-        todoList,
-        currentTask: { ...state.currentTask, id: newId }
-      };
-    case 'CANCEL_CHANGES':
-      return {
-        ...state,
-        currentTask: emptyTask
-      };
-    case 'TASK_CHANGE':
-      return {
-        ...state,
-        currentTask: { ...state.currentTask, text: action.value }
-      };
-    case 'COMPLETED_CHANGE':
-      todoList[action.id].done = action.value;
-      return {
-        ...state,
-        todoList
-      };
-    default:
-      return state;
-  }
-}
+const middleware = applyMiddleware(reduxThunk);
 
-export const store = createStore(reducer, { todoList: [], currentTask: emptyTask });
+export const store = createStore(reducer, middleware);

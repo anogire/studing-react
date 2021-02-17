@@ -1,86 +1,60 @@
 import React from 'react';
+import { connect } from 'react-redux';
+
+import { fetchData, fetchDeleteItem, fetchUpdateItem, fetchInsertItem, selectContactsTable } from '../../store/contacts';
+import { selectFormIsShow, selectFormIsNew, selectFormContact, toggleContactForm, editContact, addContact } from '../../store/contactForm';
 import { ContactsTable } from '../ContactsTable';
-import { ContactsForm } from '../ContactsForm';
+import { ContactForm } from '../ContactForm';
 
-const URL = 'https://6013f25bb5389800175688b1.mockapi.io';
-
-export class Contacts extends React.Component {
-  state = {
-    isShowForm: false,
-    contacts: [],
-    editContact: null,
-  };
+class Contacts extends React.Component {
 
   componentDidMount() {
-    this.getData();
+    this.props.getData();
   }
 
   render() {
+    const { data, currentContact, toggleForm, isShowForm, isNew, remove, edit, update, insert, add } = this.props;
     return (
-      <React.Fragment>
+      <>
         <ContactsTable
-          contacts={this.state.contacts}
-          isShowForm={this.state.isShowForm}
-          deleteContact={(value) => this.deleteContact(value)}
-          toggleForm={this.toggleForm}
+          contacts={data}
+          isShowForm={isShowForm}
+          toggleForm={toggleForm}
+          deleteContact={(value) => remove(value)}
+          editContact={(value) => edit(value)}
+          addContact={() => add()}
         />
         {
-          this.state.isShowForm ?
-            <ContactsForm
-              contact={this.state.editContact}
-              addContact={(value) => this.addContact(value)}
-              updateContact={(value) => this.updateContact(value)}
-              toggleForm={this.toggleForm}
+          (isShowForm) ?
+            <ContactForm
+              contact={currentContact}
+              toggleForm={toggleForm}
+              isNew={isNew}
+              updateContact={(value) => update(value)}
+              insertContact={(value) => insert(value)}
             /> :
             null
         }
-      </React.Fragment>
+      </>
     );
   }
-
-  toggleForm = (value, contact = null) => {
-    this.setState({
-      editContact: contact,
-      isShowForm: value
-    });
-  }
-
-  async getData() {
-    const response = await fetch(URL + '/contacts');
-    const data = await response.json();
-    this.setState({
-      contacts: data,
-    });
-  }
-
-  async addContact({ name, surName, phone }) {
-    await fetch(URL + '/contacts', {
-      method: 'POST',
-      body: JSON.stringify({ name, surName, phone }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    });
-    await this.getData();
-    this.toggleForm(false);
-  }
-
-  async updateContact({ id, name, surName, phone }) {
-    await fetch(URL + '/contacts/' + id, {
-      method: 'PUT',
-      body: JSON.stringify({ name, surName, phone }),
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-    });
-    await this.getData();
-    this.toggleForm(false);
-  }
-
-  async deleteContact(id) {
-    await fetch(URL + '/contacts/' + id, {
-      method: 'DELETE'
-    });
-    await this.getData();
-  }
 }
+
+const mapStateToProps = (state) => ({
+  data: selectContactsTable(state),
+  currentContact: selectFormContact(state),
+  isShowForm: selectFormIsShow(state),
+  isNew: selectFormIsNew(state)
+});
+
+const mapDispatchToProps = {
+  getData: () => fetchData(),
+  remove: (id) => fetchDeleteItem(id),
+  update: (contact) => fetchUpdateItem(contact),
+  insert: (contact) => fetchInsertItem(contact),
+  edit: editContact,
+  add: addContact,
+  toggleForm: toggleContactForm
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Contacts);

@@ -11,8 +11,8 @@ export function MainNav() {
         <NavLink to="/about" className="btn outline-primary nav-link" activeClassName="btn-primary">
           About
         </NavLink>
-        <NavLink to="/contacts" className="btn outline-primary nav-link" activeClassName="btn-primary">
-          Contacts
+        <NavLink to="/users" className="btn outline-primary nav-link" activeClassName="btn-primary">
+          Users
         </NavLink>
       </nav>
     </section>

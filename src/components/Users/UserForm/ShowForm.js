@@ -34,10 +34,11 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function GetInput({ value, field, label, isRequired = false, focus = false, isSmall = false, model, setValue }) {
+function GetInput({ type = "text", value, field, label, isRequired = false, focus = false, isSmall = false, model, setValue }) {
   return (
     <Grid item xs={12} sm={isSmall ? 6 : null}>
       <TextField
+        type={type}
         label={label}
         name={field}
         autoComplete={field}
@@ -134,6 +135,7 @@ export function ShowForm({ user, addValue, updateValue }) {
               setValue={handleChange}
             />
             <GetInput
+              type="phone"
               value={userModel.phone}
               field="phone"
               label="Phone"
@@ -142,6 +144,7 @@ export function ShowForm({ user, addValue, updateValue }) {
               setValue={handleChange}
             />
             <GetInput
+              type="email"
               value={userModel.email}
               field="email"
               label="Email"
@@ -158,6 +161,7 @@ export function ShowForm({ user, addValue, updateValue }) {
               setValue={handleChange}
             />
             <GetInput
+              type="url"
               value={userModel.website}
               field="website"
               label="Website"
@@ -253,6 +257,7 @@ export function ShowForm({ user, addValue, updateValue }) {
                 variant="contained"
                 color="primary"
                 className={classes.submit}
+                arial-label="send data"
               >
                 Send
               </Button>
@@ -265,6 +270,7 @@ export function ShowForm({ user, addValue, updateValue }) {
                 variant="contained"
                 color="primary"
                 className={classes.submit}
+                arial-label="cancel"
               >
                 Cancel
               </Button>

@@ -13,6 +13,7 @@ import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
 
 import './style.scss';
 
@@ -42,15 +43,16 @@ export function UsersList(props) {
       <h2 className="main-heading">
         {(users.length === 0) ? 'List is empty' : 'List of users'}
       </h2>
-
-      <Link
+      <Button
+        component={Link}
         to={'/users/new'}
-        className="btn btn-primary mb-3"
-        aria-label="добавить пользователя">
+        variant="contained" color="primary"
+        aria-label="add data"
+      >
         Add
-        </Link>
+      </Button>
       {(users.length !== 0) ?
-        <div className="table-responsive">
+        <div className="mt-3 table-responsive">
           <Table className="table table-striped" size="small" aria-label="users list">
             <TableHead className="w-100">
               <TableRow className="thead-dark">
@@ -125,20 +127,23 @@ function GetRecord(props) {
         {openCompany ? getCompany(user.company || "none") : null}
       </TableCell>
       <TableCell>
-        <Link
+        <Button
+          component={Link}
           to={`/users/edit/${user.id}`}
-          className="btn btn-primary" aria-label="редактировать данные">
+          variant="contained" color="primary"
+          aria-label="edit data"
+        >
           Edit
-        </Link>
+        </Button>
       </TableCell>
       <TableCell>
-        <button
-          type="button"
+        <Button
           onClick={(event) => { deleteUser(user.id); handleChangePage(event, -1) }}
-          //onClick={(event) => deleteUser(user.id)}
-          className="btn btn-danger" aria-label="удалить данные">
+          variant="contained" color="secondary"
+          aria-label="delete data"
+        >
           Delete
-        </button>
+        </Button>
       </TableCell>
     </TableRow>
   )

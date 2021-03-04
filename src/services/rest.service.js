@@ -1,24 +1,24 @@
 import api from "../actions/http-common";
 
 class DataService {
-  getAll() {
-    return api.get();
+  getAll(param) {
+    return api.get(param);
   }
 
-  get(id) {
-    return api.get(`/${id}`);
+  get(param, id) {
+    return api.get(`${param}/${id}`);
   }
 
-  create(data) {
-    return api.post('', data);
+  create(param, data) {
+    return api.post(param, data);
   }
 
-  update(id, data) {
-    return api.put(`/${id}`, data);
+  update(param, id, data) {
+    return api.put(`${param}/${id}`, data);
   }
 
-  delete(id) {
-    return api.delete(`/${id}`);
+  delete(param, id) {
+    return api.delete(`${param}/${id}`);
   }
 }
 

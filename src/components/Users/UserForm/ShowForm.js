@@ -1,17 +1,113 @@
 import { React, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useHistory } from "react-router-dom";
-
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import { ValidatorForm } from 'react-material-ui-form-validator';
+
+import { UserMainData } from './UserMainData';
+import { UserCompany } from './UserCompany';
+import { UserAddress } from './UserAddress';
+import { USERS } from '../../../actions/api_consts';
 
 import './style.scss';
 
+export function ShowForm({ user, addValue, updateValue }) {
+  const classes = useStyles();
+  const history = useHistory();
+
+  const [userModel, setUserModel] = useState(
+    {
+      name: user ? user.name : "",
+      username: user ? user.username : "",
+      email: user ? user.email : "",
+      phone: user ? user.phone : "",
+      website: user ? user.website : "",
+      company: user ? user.company : {
+        name: "", catchPhrase: "", bs: ""
+      },
+      address: user ? user.address : {
+        street: "", suite: "", city: "", zipcode: "",
+        geo: user ? user.address.geo : {
+          lat: "", lng: ""
+        }
+      }
+    });
+
+  const handleChange = (name, value) => {
+    setUserModel(prevValue => ({
+      ...prevValue,
+      [name]: value
+    }));
+  };
+
+  const sendData = (e) => {
+    e.preventDefault();
+    history.push(USERS);
+    if (user) {
+      updateValue(userModel)
+    }
+    else {
+      addValue(userModel);
+    }
+  };
+
+  return (
+    <Container component="section" maxWidth="sm" className="ShowForm-section">
+      <CssBaseline />
+      <div className={classes.paper}>
+        <Typography component="h1" variant="h5">
+          {user ? "Edit user data" : "Add user data"}
+        </Typography>
+
+        <ValidatorForm className={classes.form} onSubmit={sendData}>
+          <Grid container spacing={2}>
+
+            <UserMainData mainData={userModel || {}} updateMainData={handleChange} />
+
+            <UserAddress address={userModel.address || {}} updateAddress={handleChange} />
+
+            <UserCompany company={userModel.company || {}} updateCompany={handleChange} />
+
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+                arial-label="send data"
+              >
+                Send
+              </Button>
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <Button
+                component={Link}
+                to={USERS}
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+                arial-label="cancel"
+              >
+                Cancel
+              </Button>
+            </Grid>
+
+          </Grid>
+        </ValidatorForm>
+      </div>
+    </Container>
+  );
+}
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -34,250 +130,111 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function GetInput({ type = "text", value, field, label, isRequired = false, focus = false, isSmall = false, model, setValue }) {
-  return (
-    <Grid item xs={12} sm={isSmall ? 6 : null}>
-      <TextField
-        type={type}
-        label={label}
-        name={field}
-        autoComplete={field}
-        value={value}
-        onChange={event => setValue(event, model)}
-        variant="outlined"
-        fullWidth
-        required={isRequired}
-        autoFocus={focus}
-      />
-    </Grid>
-  )
-}
+// {/* <Grid item xs={12}>
+//               <TextValidator
+//                 type="text"
+//                 label="Full Name"
+//                 name="name"
+//                 autoComplete="name"
+//                 value={userModel.name}
+//                 onChange={e => handleChange(e.target.name, e.target.value)}
+//                 variant="outlined"
+//                 fullWidth required autoFocus
+//                 validators={['required', 'minStringLength:3', 'maxStringLength:50']}
+//                 errorMessages={['this field is required', 'min length 3', 'max length 50']}
+//               />
+//             </Grid>
 
-export function ShowForm({ user, addValue, updateValue }) {
-  const classes = useStyles();
-  const history = useHistory();
+//             <Grid item xs={12}>
+//               <TextValidator
+//                 type="phone"
+//                 label="Phone"
+//                 name="phone"
+//                 autoComplete="phone"
+//                 value={userModel.phone}
+//                 onChange={e => handleChange(e.target.name, e.target.value)}
+//                 variant="outlined"
+//                 fullWidth required
+//                 validators={['required', 'matchRegexp:^\\d{3} \\d{3}-\\d{2}-\\d{2}$|^\\+380 \\(\\d{2}\\) \\d{3}-\\d{2}-\\d{2}$']}
+//                 errorMessages={['this field is required', '+380 (xx) xxx-xx-xx or xxx xxx-xx-xx']}
+//               />
+//             </Grid>
 
-  const [userModel, setUserModel] = useState(
-    {
-      name: user ? user.name : "",
-      username: user ? user.username : "",
-      email: user ? user.email : "",
-      phone: user ? user.phone : "",
-      website: user ? user.website : "",
-    });
+//             <Grid item xs={12}>
+//               <TextValidator
+//                 type="email"
+//                 label="Email"
+//                 name="email"
+//                 autoComplete="email"
+//                 value={userModel.email}
+//                 onChange={e => handleChange(e.target.name, e.target.value)}
+//                 variant="outlined"
+//                 fullWidth required
+//                 validators={['required', 'isEmail']}
+//                 errorMessages={['this field is required', 'email is not valid']}
+//               />
+//             </Grid>
 
-  const [companyModel, setCompanyModel] = useState(
-    {
-      name: user ? user.company.name : "",
-      catchPhrase: user ? user.company.catchPhrase : "",
-      bs: user ? user.company.bs : "",
-    });
+//             <Grid item xs={12} sm={6}>
+//               <TextField
+//                 type="text"
+//                 label="Username"
+//                 name="username"
+//                 value={userModel.username}
+//                 onChange={e => handleChange(e.target.name, e.target.value)}
+//                 variant="outlined"
+//                 fullWidth
+//               />
+//             </Grid>
 
-  const [addressModel, setAddressModel] = useState(
-    {
-      street: user ? user.address.street : "",
-      suite: user ? user.address.suite : "",
-      city: user ? user.address.city : "",
-      zipcode: user ? user.address.zipcode : "",
-    });
+//             <Grid item xs={12} sm={6}>
+//               <TextField
+//                 type="url"
+//                 label="Website"
+//                 name="website"
+//                 value={userModel.website}
+//                 onChange={e => handleChange(e.target.name, e.target.value)}
+//                 variant="outlined"
+//                 fullWidth
+//               />
+//             </Grid>
 
-  const [geoModel, setGeoModel] = useState(
-    {
-      lat: user ? user.address.geo.lat : "",
-      lng: user ? user.address.geo.lng : "",
-    });
+// const handleChange = (e) => {
+//   const { name, value } = e.target;
+//   setUserModel(prevValue => ({
+//     ...prevValue,
+//     [name]: value
+//   }));
+// };
+// const updateGeoAddress = (name, value) => {
+//   setUserModel(prevValue => ({
+//     ...prevValue,
+//     address: {
+//       ...userModel.address,
+//       geo: {
+//         ...userModel.address.geo,
+//         [name]: value
+//       }
+//     }
+//   }))
+// }
 
-  const handleChange = (e, setValue) => {
-    const { name, value } = e.target;
-    setValue(prevValue => ({
-      ...prevValue,
-      [name]: value
-    }));
-  };
+// const updateAddress = (name, value) => {
+//   setUserModel(prevValue => ({
+//     ...prevValue,
+//     address: {
+//       ...userModel.address,
+//       [name]: value
+//     }
+//   }))
+// }
 
-  const sendData = (e) => {
-    const model = {
-      ...userModel,
-      company: companyModel,
-      address: {
-        ...addressModel,
-        geo: geoModel
-      }
-    };
-    e.preventDefault();
-    history.push('/users');
-    if (user) {
-      updateValue(model)
-    }
-    else {
-      addValue(model);
-    }
-  };
-
-  return (
-    <Container component="section" maxWidth="md" className="ShowForm-section">
-      <CssBaseline />
-      <div className={classes.paper}>
-        <Typography component="h1" variant="h5">
-          {user ? "Edit user data" : "Add user data"}
-        </Typography>
-        <form className={classes.form} noValidate
-          onSubmit={sendData}
-        >
-          <Grid container spacing={2}>
-            <GetInput
-              value={userModel.name}
-              field="name"
-              label="Full Name"
-              isRequired={true}
-              focus={true}
-              model={setUserModel}
-              setValue={handleChange}
-            />
-            <GetInput
-              type="phone"
-              value={userModel.phone}
-              field="phone"
-              label="Phone"
-              isRequired={true}
-              model={setUserModel}
-              setValue={handleChange}
-            />
-            <GetInput
-              type="email"
-              value={userModel.email}
-              field="email"
-              label="Email"
-              isRequired={true}
-              model={setUserModel}
-              setValue={handleChange}
-            />
-            <GetInput
-              value={userModel.username}
-              field="username"
-              label="UserName"
-              isSmall={true}
-              model={setUserModel}
-              setValue={handleChange}
-            />
-            <GetInput
-              type="url"
-              value={userModel.website}
-              field="website"
-              label="Website"
-              isSmall={true}
-              model={setUserModel}
-              setValue={handleChange}
-            />
-            <Grid item xs={12}>
-              <Typography variant="h6" gutterBottom>Address</Typography>
-            </Grid>
-            <GetInput
-              value={addressModel.street}
-              field="street"
-              label="Street"
-              isRequired={true}
-              isSmall={true}
-              model={setAddressModel}
-              setValue={handleChange}
-            />
-            <GetInput
-              value={addressModel.suite}
-              field="suite"
-              label="Suite"
-              isRequired={true}
-              isSmall={true}
-              model={setAddressModel}
-              setValue={handleChange}
-            />
-            <GetInput
-              value={addressModel.city}
-              field="city"
-              label="City"
-              isRequired={true}
-              isSmall={true}
-              model={setAddressModel}
-              setValue={handleChange}
-            />
-            <GetInput
-              value={addressModel.zipcode}
-              field="zipcode"
-              label="Zip Code"
-              isSmall={true}
-              model={setAddressModel}
-              setValue={handleChange}
-            />
-            <GetInput
-              value={geoModel.lat}
-              field="lat"
-              label="Geo lat"
-              isSmall={true}
-              model={setGeoModel}
-              setValue={handleChange}
-            />
-            <GetInput
-              value={geoModel.lng}
-              field="lng"
-              label="Geo lng"
-              isSmall={true}
-              model={setGeoModel}
-              setValue={handleChange}
-            />
-            <Grid item xs={12}>
-              <Typography variant="h6" gutterBottom>Company</Typography>
-            </Grid>
-            <GetInput
-              value={companyModel.name}
-              field="name"
-              label="Name"
-              isRequired={true}
-              model={setCompanyModel}
-              setValue={handleChange}
-            />
-            <GetInput
-              value={companyModel.catchPhrase}
-              field="catchPhrase"
-              label="Catch Phrase"
-              model={setCompanyModel}
-              setValue={handleChange}
-            />
-            <GetInput
-              value={companyModel.bs}
-              field="bs"
-              label="BS"
-              model={setCompanyModel}
-              setValue={handleChange}
-            />
-          </Grid>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-                arial-label="send data"
-              >
-                Send
-              </Button>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Button
-                component={Link}
-                to={'/users'}
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-                arial-label="cancel"
-              >
-                Cancel
-              </Button>
-            </Grid>
-          </Grid>
-        </form>
-      </div>
-    </Container>
-  );
-}
+// const updateCompany = (name, value) => {
+//   setUserModel(prevValue => ({
+//     ...prevValue,
+//     company: {
+//       ...userModel.company,
+//       [name]: value
+//     }
+//   }))
+// } */}

@@ -1,8 +1,8 @@
 import axios from "axios";
-import { URL_USERS } from './api_consts';
+import { URL_BASE } from './api_consts';
 
 export default axios.create({
-  baseURL: URL_USERS,
+  baseURL: URL_BASE,
   headers: {
     "Content-type": "application/json"
   }

@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 
 import { ShowForm } from './ShowForm';
+import { USERS } from '../../../actions/api_consts';
 import { usersList } from '../../../actions/selectors';
 import { addItem, updateItem } from '../../../actions/actions';
 
@@ -17,8 +18,8 @@ function mapStateToProps(state, ownProps) {
 };
 
 const mapDispatchToProps = {
-  add: addItem,
-  update: updateItem,
+  add: (value) => addItem(USERS, value),
+  update: (id, value) => updateItem(USERS, id, value),
 };
 
 

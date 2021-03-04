@@ -1,47 +1,47 @@
 import dataService from '../services/rest.service';
 import { getDataSuccess, getDataError, deleteError, updateError, createError } from './messages';
 
-export function getAll() {
+export function getAll(base) {
   return async dispatch => {
     try {
-      const response = await dataService.getAll();
+      const response = await dataService.getAll(base);
       const action = getDataSuccess(response.data);
       dispatch(action)
     } catch (error) {
-      dispatch(getDataError())
+      dispatch(getDataError(base))
     }
   }
 };
 
-export function deleteItem(id) {
+export function deleteItem(base, id) {
   return async dispatch => {
     try {
-      await dataService.delete(id);
-      dispatch(getAll());
+      await dataService.delete(base, id);
+      dispatch(getAll(base));
     } catch (error) {
-      dispatch(deleteError())
+      dispatch(deleteError(base, { id: id }))
     }
   }
 };
 
-export function updateItem(id, data) {
+export function updateItem(base, id, data) {
   return async dispatch => {
     try {
-      await dataService.update(id, data);
-      dispatch(getAll());
+      await dataService.update(base, id, data);
+      dispatch(getAll(base));
     } catch (error) {
-      dispatch(updateError())
+      dispatch(updateError(base, { id: id, data: data }))
     }
   }
 };
 
-export function addItem(data) {
+export function addItem(base, data) {
   return async dispatch => {
     try {
-      await dataService.create(data);
-      dispatch(getAll());
+      await dataService.create(base, data);
+      dispatch(getAll(base));
     } catch (error) {
-      dispatch(createError())
+      dispatch(createError(base, { data: data }))
     }
   }
 };

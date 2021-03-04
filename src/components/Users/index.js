@@ -2,22 +2,17 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { UsersList } from './UsersList';
+import { USERS } from '../../actions/api_consts';
 import { usersList } from '../../actions/selectors';
 import { getAll, deleteItem } from '../../actions/actions';
 
-// const mapStateToProps = (state) => ({
-//   users: usersList(state)
-// });
-
-function mapStateToProps(state) {
-  return {
-    users: usersList(state)
-  }
-};
+const mapStateToProps = (state) => ({
+  users: usersList(state)
+});
 
 const mapDispatchToProps = {
-  getUsers: () => getAll(),
-  remove: (id) => deleteItem(id)
+  getUsers: () => getAll(USERS),
+  remove: (id) => deleteItem(USERS, id)
 }
 
 

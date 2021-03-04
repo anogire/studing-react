@@ -3,6 +3,8 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
 
+import { USERS, ALBUMS } from '../../actions/api_consts';
+
 import './style.scss';
 
 export function Header() {
@@ -15,8 +17,11 @@ export function Header() {
         <Button color="primary" component={NavLink} to="/about" className="btn-nav" activeClassName="btn-active">
           About
         </Button>
-        <Button color="primary" component={NavLink} to="/users" className="btn-nav" activeClassName="btn-active">
+        <Button color="primary" component={NavLink} to={USERS} className="btn-nav" activeClassName="btn-active">
           Users
+        </Button>
+        <Button color="primary" component={NavLink} to={ALBUMS} className="btn-nav" activeClassName="btn-active">
+          Albums
         </Button>
       </Toolbar>
     </AppBar>

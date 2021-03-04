@@ -15,6 +15,8 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
+import { USERS } from '../../../actions/api_consts';
+
 import './style.scss';
 
 
@@ -45,7 +47,7 @@ export function UsersList(props) {
       </h2>
       <Button
         component={Link}
-        to={'/users/new'}
+        to={USERS + '/new'}
         variant="contained" color="primary"
         aria-label="add data"
       >
@@ -129,7 +131,7 @@ function GetRecord(props) {
       <TableCell>
         <Button
           component={Link}
-          to={`/users/edit/${user.id}`}
+          to={USERS + `/edit/${user.id}`}
           variant="contained" color="primary"
           aria-label="edit data"
         >

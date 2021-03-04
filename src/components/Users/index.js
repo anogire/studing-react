@@ -3,11 +3,11 @@ import { connect } from 'react-redux';
 
 import { UsersList } from './UsersList';
 import { USERS } from '../../actions/api_consts';
-import { usersList } from '../../actions/selectors';
+import { data } from '../../actions/selectors';
 import { getAll, deleteItem } from '../../actions/actions';
 
 const mapStateToProps = (state) => ({
-  users: usersList(state)
+  users: data(state)
 });
 
 const mapDispatchToProps = {

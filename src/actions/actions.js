@@ -1,6 +1,22 @@
 import dataService from '../services/rest.service';
 import { getDataSuccess, getDataError, deleteError, updateError, createError } from './messages';
 
+export function getAllData(bases) {
+  let resultData = [];
+  return async dispatch => {
+    try {
+      for (const base of bases) {
+        const response = await dataService.getAll(base);
+        resultData.push(response.data);
+      }
+      const action = getDataSuccess(resultData);
+      dispatch(action)
+    } catch (error) {
+      dispatch(getDataError(bases))
+    }
+  }
+};
+
 export function getAll(base) {
   return async dispatch => {
     try {

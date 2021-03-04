@@ -21,7 +21,10 @@ import './style.scss';
 
 
 export function AlbumsList(props) {
-  const { albums } = props;
+  const { albums, users } = props;
+  console.log('AlbumsList: albums: ', albums);
+  console.log('AlbumsList: users: ', users);
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 

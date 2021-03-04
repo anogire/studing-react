@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 
 import { ShowForm } from './ShowForm';
 import { USERS } from '../../../actions/api_consts';
-import { usersList } from '../../../actions/selectors';
+import { data } from '../../../actions/selectors';
 import { addItem, updateItem } from '../../../actions/actions';
 
 function mapStateToProps(state, ownProps) {
@@ -11,7 +11,7 @@ function mapStateToProps(state, ownProps) {
     {
       id: currentId,
       user: (currentId) ?
-        usersList(state).find(user => user.id === currentId) :
+        data(state).find(user => user.id === currentId) :
         null
     }
   )

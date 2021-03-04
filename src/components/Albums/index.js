@@ -3,39 +3,35 @@ import { connect } from 'react-redux';
 
 import { AlbumsList } from './AlbumsList';
 import { ALBUMS, USERS } from '../../actions/api_consts';
-import { usersList, albumsList } from '../../actions/selectors';
-import { getAll, deleteItem } from '../../actions/actions';
+import { data } from '../../actions/selectors';
+import { deleteItem, getAllData } from '../../actions/actions';
 
-// const mapStateToProps = (state) => ({
-//   users: usersList(state),
-//   albums: albumsList(state)
-// });
 
 function mapStateToProps(state) {
+  // нужно что-то придумать с selectors, чтобы не было [0], [1] ...
   return {
-    users: usersList(state),
-    albums: albumsList(state)
+    albums: data(state)[0],
+    users: data(state)[1]
   }
 };
 
 const mapDispatchToProps = {
-  getAlbums: () => getAll(ALBUMS),
-  getUsers: () => getAll(USERS),
+  getAllData: () => getAllData([ALBUMS, USERS]),
+  // getAlbums: () => getAll(ALBUMS),
+  // getUsers: () => getAll(USERS),
   remove: (id) => deleteItem(ALBUMS, id)
 }
 
 class _Albums extends React.Component {
 
   componentDidMount() {
-    this.props.getUsers();
-    this.props.getAlbums();
+    this.props.getAllData();
   }
 
   render() {
-    console.log('albums: ', this.props.albums);
-    console.log('users: ', this.props.users);
-    const { albums, remove } = this.props;
-    return (<AlbumsList albums={albums} deleteAlbum={(value) => remove(value)} />)
+    const { albums, users, remove } = this.props;
+
+    return (albums ? <AlbumsList albums={albums} users={users} deleteAlbum={(value) => remove(value)} /> : null);
   }
 
 }

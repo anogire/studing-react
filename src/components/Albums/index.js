@@ -2,37 +2,54 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { AlbumsList } from './AlbumsList';
-import { ALBUMS, USERS } from '../../actions/api_consts';
-import { data } from '../../actions/selectors';
-import { deleteItem, getAllData } from '../../actions/actions';
+import { selectUsersMap, usersFetch } from '../../store/users';
+import { selectAlbumsList, albumDelete, albumsFetch } from '../../store/albums';
+import { photosByAlbumIdDelete, photosFetch, selectPhotosForAlbum } from '../../store/photos';
 
 
-function mapStateToProps(state) {
-  // нужно что-то придумать с selectors, чтобы не было [0], [1] ...
-  return {
-    albums: data(state)[0],
-    users: data(state)[1]
-  }
-};
+const mapStateToProps = (state) => ({
+  albums: selectAlbumsList(state),
+  users: selectUsersMap(state),
+  photos: selectPhotosForAlbum(state)
+});
 
 const mapDispatchToProps = {
-  getAllData: () => getAllData([ALBUMS, USERS]),
-  // getAlbums: () => getAll(ALBUMS),
-  // getUsers: () => getAll(USERS),
-  remove: (id) => deleteItem(ALBUMS, id)
+  getAlbums: () => albumsFetch(),
+  getUsers: () => usersFetch(),
+  getPhotos: () => photosFetch(),
+  remove: (id) => albumDelete(id),
+  deletePhotosByAlbumId: (photos) => photosByAlbumIdDelete(photos),
 }
 
 class _Albums extends React.Component {
 
   componentDidMount() {
-    this.props.getAllData();
+    this.props.getAlbums();
+    this.props.getUsers();
+    this.props.getPhotos();
   }
 
   render() {
-    const { albums, users, remove } = this.props;
-
-    return (albums ? <AlbumsList albums={albums} users={users} deleteAlbum={(value) => remove(value)} /> : null);
+    const { photos, albums, users } = this.props;
+    return (
+      <AlbumsList
+        albums={albums}
+        users={users}
+        photos={photos}
+        deleteAlbum={this.deleteMethod}
+      />
+    );
   }
+
+  deleteMethod = async (value) => {
+    const { photos, remove, deletePhotosByAlbumId } = this.props;
+
+    if (photos[value] && photos[value] !== []) {
+      await deletePhotosByAlbumId(photos[value]); //удалить все фотографии
+    }
+    await remove(value) //удалить альбом
+  }
+
 
 }
 

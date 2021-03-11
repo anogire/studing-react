@@ -1,9 +1,7 @@
 import { connect } from 'react-redux';
 
-import { ShowForm } from './ShowForm';
-import { USERS } from '../../../actions/api_consts';
-import { data } from '../../../actions/selectors';
-import { addItem, updateItem } from '../../../actions/actions';
+import { ShowFormUser } from './ShowFormUser';
+import { selectUsersMap, userCreate, userUpdate } from '../../../store/users';
 
 function mapStateToProps(state, ownProps) {
   const currentId = (ownProps.match.params.id) ? ownProps.match.params.id : null;
@@ -11,23 +9,25 @@ function mapStateToProps(state, ownProps) {
     {
       id: currentId,
       user: (currentId) ?
-        data(state).find(user => user.id === currentId) :
+        selectUsersMap(state)[currentId] :
         null
     }
   )
 };
 
 const mapDispatchToProps = {
-  add: (value) => addItem(USERS, value),
-  update: (id, value) => updateItem(USERS, id, value),
+  add: (value) => userCreate(value),
+  update: (value) => userUpdate(value),
 };
 
 
-function _UserForm({ user, id, add, update }) {
+function _UserForm({ user, add, update }) {
   return (
-    <ShowForm user={user}
+    <ShowFormUser
+      user={user}
       addValue={(value) => add(value)}
-      updateValue={(value) => update(id, value)} />
+      updateValue={(value) => update(value)}
+    />
   )
 }
 

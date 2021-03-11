@@ -1,29 +1,16 @@
 import { React, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableFooter from '@material-ui/core/TableFooter';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TablePagination from '@material-ui/core/TablePagination';
-// import IconButton from '@material-ui/core/IconButton';
-// import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-// import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-// import Card from '@material-ui/core/Card';
-// import CardContent from '@material-ui/core/CardContent';
-// import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import { Table, TableBody, TableFooter, TableCell, TableHead, TableRow, TablePagination, Button, Typography, IconButton, Card, CardContent } from '@material-ui/core';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 
-import { ALBUMS } from '../../../actions/api_consts';
+import { ALBUMS } from '../../../store/api-connect/api_consts';
 
 import './style.scss';
 
 
 export function AlbumsList(props) {
-  const { albums, users } = props;
-  console.log('AlbumsList: albums: ', albums);
-  console.log('AlbumsList: users: ', users);
+  const { photos, albums, users, deleteAlbum } = props;
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -51,6 +38,7 @@ export function AlbumsList(props) {
       <Button
         component={Link}
         to={ALBUMS + '/new'}
+        disabled={Object.keys(users).length === 0}
         variant="contained" color="primary"
         aria-label="add data"
       >
@@ -59,10 +47,12 @@ export function AlbumsList(props) {
       {(albums.length !== 0) ?
         <div className="mt-3 table-responsive">
           <Table className="table table-striped" size="small" aria-label="albums list">
-            <TableHead className="w-100">
+            <TableHead>
               <TableRow className="thead-dark">
                 <TableCell>Id</TableCell>
                 <TableCell>UserId</TableCell>
+                <TableCell>User Data</TableCell>
+                <TableCell>Photos</TableCell>
                 <TableCell>Title</TableCell>
                 <TableCell colSpan="2"></TableCell>
               </TableRow>
@@ -71,12 +61,18 @@ export function AlbumsList(props) {
               {
                 albums
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((album, index) => (<GetRecord key={index} album={album} deleteAlbum={props.deleteAlbum} handleChangePage={handleChangePage} />))
+                  .map((album, index) => (
+                    <GetRecord key={index}
+                      album={album}
+                      photos={photos}
+                      users={users}
+                      deleteAlbum={deleteAlbum}
+                      handleChangePage={handleChangePage} />))
               }
             </TableBody>
             <TableFooter>
               <TableRow>
-                <TableCell colSpan="5">
+                <TableCell colSpan="7">
                   <TablePagination
                     rowsPerPageOptions={[10, 25, 100]}
                     component="div"
@@ -102,21 +98,39 @@ export function AlbumsList(props) {
 }
 
 function GetRecord(props) {
-  const { deleteAlbum, album, handleChangePage } = props;
-  // const [openCompany, setOpenCompany] = useState(false);
+  const { deleteAlbum, album, users, photos, handleChangePage } = props;
+  const [openUserData, setOpenUserData] = useState(false);
+  const [openPhotos, setOpenPhotos] = useState(false);
 
   return (
     <TableRow>
       <TableCell component="th" scope="row">{album.id}</TableCell>
       <TableCell align="center">{album.userId}</TableCell>
+
+      <TableCell>
+        <IconButton
+          onClick={() => setOpenUserData(!openUserData)}
+          aria-label="show user data" size="small"
+          disabled={!users[album.userId]}
+        >
+          {openUserData ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+        </IconButton>
+        {openUserData ? getUserData(users[album.userId] || "none") : null}
+      </TableCell>
+
+      <TableCell>
+        <IconButton
+          onClick={() => setOpenPhotos(!openPhotos)}
+          disabled={!photos[album.id]}
+          aria-label="show photos" size="small"
+        >
+          {openPhotos ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+        </IconButton>
+        {openPhotos ? (photos[album.id]) ? getPhotosByAlbumId(photos[album.id]) : null : null}
+      </TableCell>
+
       <TableCell>{album.title || "none"}</TableCell>
 
-      {/* <TableCell>
-        <IconButton aria-label="show details about company" size="small" onClick={() => setOpenCompany(!openCompany)}>
-          {openCompany ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-        </IconButton>
-        {openCompany ? getCompany(album.company || "none") : null}
-      </TableCell> */}
       <TableCell>
         <Button
           component={Link}
@@ -129,7 +143,10 @@ function GetRecord(props) {
       </TableCell>
       <TableCell>
         <Button
-          onClick={(event) => { deleteAlbum(album.id); handleChangePage(event, -1) }}
+          onClick={(event) => {
+            deleteAlbum(album.id);
+            handleChangePage(event, -1)
+          }}
           variant="contained" color="secondary"
           aria-label="delete data"
         >
@@ -140,29 +157,44 @@ function GetRecord(props) {
   )
 }
 
-// function getCompany(company) {
-//   return (
-//     <Card className="AlbumsList-card" variant="outlined">
-//       <CardContent>
-//         <Typography className="AlbumsList-card-title" color="textSecondary">
-//           Name:
-//         </Typography>
-//         <Typography variant="body2" component="p">
-//           {company.name || "none"}
-//         </Typography>
-//         <Typography className="AlbumsList-card-title" color="textSecondary">
-//           CatchPhrase:
-//         </Typography>
-//         <Typography variant="body2" component="p">
-//           {company.catchPhrase || "none"}
-//         </Typography>
-//         <Typography className="AlbumsList-card-title" color="textSecondary">
-//           BS:
-//         </Typography>
-//         <Typography variant="body2" component="p">
-//           {company.bs || "none"}
-//         </Typography>
-//       </CardContent>
-//     </Card>
-//   )
-// }
+function getUserData(user) {
+  return (
+    <Card className="AlbumsList-card" variant="outlined">
+      <CardContent>
+        <Typography className="AlbumsList-card-title" color="textSecondary">
+          Name:
+        </Typography>
+        <Typography variant="body2" component="p">
+          {user.name || "none"}
+        </Typography>
+        <Typography className="AlbumsList-card-title" color="textSecondary">
+          Phone:
+        </Typography>
+        <Typography variant="body2" component="p">
+          {user.phone || "none"}
+        </Typography>
+        <Typography className="AlbumsList-card-title" color="textSecondary">
+          Email:
+        </Typography>
+        <Typography variant="body2" component="p">
+          {user.email || "none"}
+        </Typography>
+      </CardContent>
+    </Card>
+  )
+}
+
+function getPhotosByAlbumId(photos) {
+  return (
+    <Card className="AlbumsList-card" variant="outlined">
+      <CardContent>
+        {
+          photos.map((photo, index) =>
+            <Typography variant="body2" component="ul" key={index}>
+              <li>{photo.id}. {photo.title || "none"}</li>
+            </Typography>
+          )}
+      </CardContent>
+    </Card>
+  )
+}

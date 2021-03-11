@@ -1,0 +1,20 @@
+a {
+  &:hover {
+    color: #fff !important;
+  }
+}
+.ShowFormAlbum-section {
+  max-width: 100%;
+  min-width: 370px;
+}
+.formSelect {
+    width: 100%;
+    background-color: #fafafa;
+    border: 1px solid #c9c9c9;
+    border-radius: 4px;
+    cursor: pointer;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    padding: 18.5px 14px;
+}

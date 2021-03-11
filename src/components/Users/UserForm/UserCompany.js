@@ -1,7 +1,5 @@
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
+import { Grid, Typography, TextField } from '@material-ui/core';
 import { TextValidator } from 'react-material-ui-form-validator';
-import TextField from '@material-ui/core/TextField';
 
 import './style.scss';
 

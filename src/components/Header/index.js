@@ -1,9 +1,7 @@
 import { NavLink } from 'react-router-dom';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Button from '@material-ui/core/Button';
+import { AppBar, Toolbar, Button } from '@material-ui/core';
 
-import { USERS, ALBUMS } from '../../actions/api_consts';
+import { USERS, ALBUMS, PHOTOS } from '../../store/api-connect/api_consts';
 
 import './style.scss';
 
@@ -22,6 +20,9 @@ export function Header() {
         </Button>
         <Button color="primary" component={NavLink} to={ALBUMS} className="btn-nav" activeClassName="btn-active">
           Albums
+        </Button>
+        <Button color="primary" component={NavLink} to={PHOTOS} className="btn-nav" activeClassName="btn-active">
+          Photos
         </Button>
       </Toolbar>
     </AppBar>

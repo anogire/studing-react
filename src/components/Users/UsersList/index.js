@@ -1,27 +1,16 @@
 import { React, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableFooter from '@material-ui/core/TableFooter';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TablePagination from '@material-ui/core/TablePagination';
-import IconButton from '@material-ui/core/IconButton';
+import { Table, TableBody, TableFooter, TableCell, TableHead, TableRow, TablePagination, IconButton, Card, CardContent, Typography, Button } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 
-import { USERS } from '../../../actions/api_consts';
+import { USERS } from '../../../store/api-connect/api_consts';
 
 import './style.scss';
 
 
 export function UsersList(props) {
-  const { users } = props;
+  const { users, deleteUser, albums } = props;
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -54,12 +43,13 @@ export function UsersList(props) {
         Add
       </Button>
       {(users.length !== 0) ?
-        <div className="mt-3 table-responsive">
+        <div className="table-responsive mt-3">
           <Table className="table table-striped" size="small" aria-label="users list">
-            <TableHead className="w-100">
+            <TableHead>
               <TableRow className="thead-dark">
                 <TableCell>Id</TableCell>
                 <TableCell>Name</TableCell>
+                <TableCell>Albums</TableCell>
                 <TableCell>UserName</TableCell>
                 <TableCell>Email</TableCell>
                 <TableCell>Address</TableCell>
@@ -73,12 +63,17 @@ export function UsersList(props) {
               {
                 users
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((user, index) => (<GetRecord key={index} user={user} deleteUser={props.deleteUser} handleChangePage={handleChangePage} />))
+                  .map((user, index) => (
+                    <GetRecord key={index}
+                      user={user}
+                      albums={albums}
+                      deleteUser={deleteUser}
+                      handleChangePage={handleChangePage} />))
               }
             </TableBody>
             <TableFooter>
               <TableRow>
-                <TableCell colSpan="10">
+                <TableCell colSpan="11">
                   <TablePagination
                     rowsPerPageOptions={[10, 25, 100]}
                     component="div"
@@ -104,30 +99,53 @@ export function UsersList(props) {
 }
 
 function GetRecord(props) {
-  const { deleteUser, user, handleChangePage } = props;
+  const { deleteUser, user, handleChangePage, albums } = props;
   const [openCompany, setOpenCompany] = useState(false);
   const [openAddress, setOpenAddress] = useState(false);
+  const [openAlbums, setOpenAlbums] = useState(false);
 
   return (
     <TableRow>
       <TableCell component="th" scope="row">{user.id}</TableCell>
       <TableCell align="center">{user.name || "none"}</TableCell>
+
+      <TableCell>
+        <IconButton
+          onClick={() => setOpenAlbums(!openAlbums)}
+          disabled={!albums[user.id]}
+          aria-label="show albums" size="small"
+        >
+          {openAlbums ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+        </IconButton>
+        {openAlbums ? (albums[user.id]) ? getAlbumsByUserId(albums[user.id]) : null : null}
+      </TableCell>
+
       <TableCell>{user.username || "none"}</TableCell>
       <TableCell>{user.email || "none"}</TableCell>
+
       <TableCell>
-        <IconButton aria-label="show details about address" size="small" onClick={() => setOpenAddress(!openAddress)}>
+        <IconButton
+          onClick={() => setOpenAddress(!openAddress)}
+          aria-label="show details about address" size="small"
+        >
           {openAddress ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
         </IconButton>
         {openAddress ? getAddress(user.address || "none") : null}
       </TableCell>
+
       <TableCell>{user.phone || "none"}</TableCell>
       <TableCell>{user.website || "none"}</TableCell>
+
       <TableCell>
-        <IconButton aria-label="show details about company" size="small" onClick={() => setOpenCompany(!openCompany)}>
+        <IconButton
+          onClick={() => setOpenCompany(!openCompany)}
+          aria-label="show details about company" size="small"
+        >
           {openCompany ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
         </IconButton>
         {openCompany ? getCompany(user.company || "none") : null}
       </TableCell>
+
       <TableCell>
         <Button
           component={Link}
@@ -140,7 +158,10 @@ function GetRecord(props) {
       </TableCell>
       <TableCell>
         <Button
-          onClick={(event) => { deleteUser(user.id); handleChangePage(event, -1) }}
+          onClick={(event) => {
+            deleteUser(user.id);
+            handleChangePage(event, -1)
+          }}
           variant="contained" color="secondary"
           aria-label="delete data"
         >
@@ -213,6 +234,21 @@ function getCompany(company) {
         <Typography variant="body2" component="p">
           {company.bs || "none"}
         </Typography>
+      </CardContent>
+    </Card>
+  )
+}
+
+function getAlbumsByUserId(albums) {
+  return (
+    <Card className="UsersList-card" variant="outlined">
+      <CardContent>
+        {
+          albums.map((album, index) =>
+            <Typography variant="body2" component="ul" key={index}>
+              <li>{album.id}. {album.title || "none"}</li>
+            </Typography>
+          )}
       </CardContent>
     </Card>
   )

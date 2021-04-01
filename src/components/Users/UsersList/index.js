@@ -9,8 +9,7 @@ import { USERS } from '../../../store/api-connect/api_consts';
 import './style.scss';
 
 
-export function UsersList(props) {
-  const { users, deleteUser, albums } = props;
+export function UsersList({ users, deleteUser, albums }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -32,17 +31,19 @@ export function UsersList(props) {
   return (
     <section className="w-100 UsersList-section">
       <h2 className="main-heading">
-        {(users.length === 0) ? 'List is empty' : 'List of users'}
+        {users.length ? 'List of users' : 'List is empty'}
       </h2>
-      <Button
-        component={Link}
-        to={USERS + '/new'}
-        variant="contained" color="primary"
-        aria-label="add data"
-      >
-        Add
-      </Button>
-      {(users.length !== 0) ?
+      <AddUserButton />
+      <UsersTable
+        users={users}
+        albums={albums}
+        deleteUser={deleteUser}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        handleChangePage={handleChangePage}
+        handleChangeRowsPerPage={handleChangeRowsPerPage}
+      />
+      {/* {(users.length !== 0) ?
         <div className="table-responsive mt-3">
           <Table className="table table-striped" size="small" aria-label="users list">
             <TableHead>
@@ -93,13 +94,91 @@ export function UsersList(props) {
           </Table>
         </div>
         : null
-      }
+      } */}
     </section>
   )
 }
 
-function GetRecord(props) {
-  const { deleteUser, user, handleChangePage, albums } = props;
+function UsersTable({ users, albums, deleteUser, page, rowsPerPage, handleChangePage, handleChangeRowsPerPage }) {
+  if (!users.length) {
+    return null;
+  }
+
+  const usersCount = users.length;
+  const offset = page * rowsPerPage;
+  users = users.slice(offset, offset + rowsPerPage);
+
+  return (
+    <div className="table-responsive mt-3">
+      <Table className="table table-striped" size="small" aria-label="users list">
+        <UsersTableHead />
+        <TableBody>
+          {users.map((user, index) => (
+            <GetRecord
+              key={index}
+              user={user}
+              albums={albums}
+              deleteUser={deleteUser}
+              handleChangePage={handleChangePage}
+            />
+          ))}
+        </TableBody>
+        <UsersTableFooter
+          count={usersCount}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          handleChangePage={handleChangePage}
+          handleChangeRowsPerPage={handleChangeRowsPerPage}
+        />
+      </Table>
+    </div>
+  )
+}
+
+function UsersTableHead() {
+  return (
+    <TableHead>
+      <TableRow className="thead-dark">
+        <TableCell>Id</TableCell>
+        <TableCell>Name</TableCell>
+        <TableCell>Albums</TableCell>
+        <TableCell>UserName</TableCell>
+        <TableCell>Email</TableCell>
+        <TableCell>Address</TableCell>
+        <TableCell>Phone</TableCell>
+        <TableCell>Website</TableCell>
+        <TableCell>Company</TableCell>
+        <TableCell colSpan="2"></TableCell>
+      </TableRow>
+    </TableHead>
+  )
+}
+
+function UsersTableFooter({ count, page, rowsPerPage, handleChangePage, handleChangeRowsPerPage }) {
+  return (
+    <TableFooter>
+      <TableRow>
+        <TableCell colSpan="11">
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 100]}
+            component="div"
+            count={count}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            SelectProps={{
+              inputProps: { 'aria-label': 'rows per page' },
+              native: true,
+            }}
+            onChangePage={handleChangePage}
+            onChangeRowsPerPage={handleChangeRowsPerPage}
+          />
+        </TableCell>
+      </TableRow>
+    </TableFooter>
+  )
+}
+
+function GetRecord({ deleteUser, user, handleChangePage, albums }) {
   const [openCompany, setOpenCompany] = useState(false);
   const [openAddress, setOpenAddress] = useState(false);
   const [openAlbums, setOpenAlbums] = useState(false);
@@ -147,26 +226,15 @@ function GetRecord(props) {
       </TableCell>
 
       <TableCell>
-        <Button
-          component={Link}
-          to={USERS + `/edit/${user.id}`}
-          variant="contained" color="primary"
-          aria-label="edit data"
-        >
-          Edit
-        </Button>
+        <EditUserButton id={user.id} />
       </TableCell>
+
       <TableCell>
-        <Button
-          onClick={(event) => {
-            deleteUser(user.id);
-            handleChangePage(event, -1)
-          }}
-          variant="contained" color="secondary"
-          aria-label="delete data"
-        >
-          Delete
-        </Button>
+        <DeleteUserButton
+          id={user.id}
+          deleteUser={deleteUser}
+          handleChangePage={handleChangePage}
+        />
       </TableCell>
     </TableRow>
   )
@@ -251,5 +319,46 @@ function getAlbumsByUserId(albums) {
           )}
       </CardContent>
     </Card>
+  )
+}
+
+function AddUserButton() {
+  return (
+    <Button
+      component={Link}
+      to={USERS + '/new'}
+      variant="contained" color="primary"
+      aria-label="add data"
+    >
+      Add
+    </Button>
+  )
+}
+
+function EditUserButton({ id }) {
+  return (
+    <Button
+      component={Link}
+      to={USERS + `/edit/${id}`}
+      variant="contained" color="primary"
+      aria-label="edit data"
+    >
+      Edit
+    </Button>
+  )
+}
+
+function DeleteUserButton({ id, deleteUser, handleChangePage }) {
+  return (
+    <Button
+      onClick={(event) => {
+        deleteUser(id);
+        handleChangePage(event, -1)
+      }}
+      variant="contained" color="secondary"
+      aria-label="delete data"
+    >
+      Delete
+    </Button>
   )
 }

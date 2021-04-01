@@ -9,9 +9,7 @@ import { ALBUMS } from '../../../store/api-connect/api_consts';
 import './style.scss';
 
 
-export function AlbumsList(props) {
-  const { photos, albums, users, deleteAlbum } = props;
-
+export function AlbumsList({ photos, albums, users, deleteAlbum }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -33,72 +31,103 @@ export function AlbumsList(props) {
   return (
     <section className="w-100 AlbumsList-section">
       <h2 className="main-heading">
-        {(albums.length === 0) ? 'List is empty' : 'List of albums'}
+        {albums.length ? 'List of albums' : 'List is empty'}
       </h2>
-      <Button
-        component={Link}
-        to={ALBUMS + '/new'}
-        disabled={Object.keys(users).length === 0}
-        variant="contained" color="primary"
-        aria-label="add data"
-      >
-        Add
-      </Button>
-      {(albums.length !== 0) ?
-        <div className="mt-3 table-responsive">
-          <Table className="table table-striped" size="small" aria-label="albums list">
-            <TableHead>
-              <TableRow className="thead-dark">
-                <TableCell>Id</TableCell>
-                <TableCell>UserId</TableCell>
-                <TableCell>User Data</TableCell>
-                <TableCell>Photos</TableCell>
-                <TableCell>Title</TableCell>
-                <TableCell colSpan="2"></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {
-                albums
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((album, index) => (
-                    <GetRecord key={index}
-                      album={album}
-                      photos={photos}
-                      users={users}
-                      deleteAlbum={deleteAlbum}
-                      handleChangePage={handleChangePage} />))
-              }
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TableCell colSpan="7">
-                  <TablePagination
-                    rowsPerPageOptions={[10, 25, 100]}
-                    component="div"
-                    count={albums.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    SelectProps={{
-                      inputProps: { 'aria-label': 'rows per page' },
-                      native: true,
-                    }}
-                    onChangePage={handleChangePage}
-                    onChangeRowsPerPage={handleChangeRowsPerPage}
-                  />
-                </TableCell>
-              </TableRow>
-            </TableFooter>
-          </Table>
-        </div>
-        : null
-      }
+      <AddAlbumButton
+        disabled={!Object.keys(users).length}
+      />
+      <AlbumsTable
+        albums={albums}
+        photos={photos}
+        users={users}
+        deleteAlbum={deleteAlbum}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        handleChangePage={handleChangePage}
+        handleChangeRowsPerPage={handleChangeRowsPerPage}
+      />
     </section>
   )
 }
 
-function GetRecord(props) {
-  const { deleteAlbum, album, users, photos, handleChangePage } = props;
+function AlbumsTable({ albums, photos, users, deleteAlbum, page, rowsPerPage, handleChangePage, handleChangeRowsPerPage }) {
+  if (!albums.length) {
+    return null;
+  }
+
+  const albumsCount = albums.length;
+  const offset = page * rowsPerPage;
+  albums = albums.slice(offset, offset + rowsPerPage);
+
+  return (
+    <div className="mt-3 table-responsive">
+      <Table className="table table-striped" size="small" aria-label="albums list">
+        <AlbumsTableHead />
+        <TableBody>
+          {albums.map((album, index) => (
+            <GetRecord
+              key={index}
+              album={album}
+              photos={photos}
+              users={users}
+              deleteAlbum={deleteAlbum}
+              handleChangePage={handleChangePage}
+            />
+          ))}
+        </TableBody>
+        <AlbumsTableFooter
+          count={albumsCount}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          handleChangePage={handleChangePage}
+          handleChangeRowsPerPage={handleChangeRowsPerPage}
+        />
+      </Table>
+    </div>
+  )
+
+}
+
+function AlbumsTableHead() {
+  return (
+    <TableHead>
+      <TableRow className="thead-dark">
+        <TableCell>Id</TableCell>
+        <TableCell>UserId</TableCell>
+        <TableCell>User Data</TableCell>
+        <TableCell>Photos</TableCell>
+        <TableCell>Title</TableCell>
+        <TableCell colSpan="2"></TableCell>
+      </TableRow>
+    </TableHead>
+  )
+}
+
+function AlbumsTableFooter({ count, page, rowsPerPage, handleChangePage, handleChangeRowsPerPage }) {
+  return (
+    <TableFooter>
+      <TableRow>
+        <TableCell colSpan="7">
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 100]}
+            component="div"
+            count={count}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            SelectProps={{
+              inputProps: { 'aria-label': 'rows per page' },
+              native: true,
+            }}
+            onChangePage={handleChangePage}
+            onChangeRowsPerPage={handleChangeRowsPerPage}
+          />
+        </TableCell>
+      </TableRow>
+    </TableFooter>
+  )
+}
+
+function GetRecord({ deleteAlbum, album, users, photos, handleChangePage }) {
   const [openUserData, setOpenUserData] = useState(false);
   const [openPhotos, setOpenPhotos] = useState(false);
 
@@ -132,26 +161,15 @@ function GetRecord(props) {
       <TableCell>{album.title || "none"}</TableCell>
 
       <TableCell>
-        <Button
-          component={Link}
-          to={ALBUMS + `/edit/${album.id}`}
-          variant="contained" color="primary"
-          aria-label="edit data"
-        >
-          Edit
-        </Button>
+        <EditAlbumButton id={album.id} />
       </TableCell>
+
       <TableCell>
-        <Button
-          onClick={(event) => {
-            deleteAlbum(album.id);
-            handleChangePage(event, -1)
-          }}
-          variant="contained" color="secondary"
-          aria-label="delete data"
-        >
-          Delete
-        </Button>
+        <DeleteAlbumButton
+          id={album.id}
+          deleteAlbum={deleteAlbum}
+          handleChangePage={handleChangePage}
+        />
       </TableCell>
     </TableRow>
   )
@@ -196,5 +214,47 @@ function getPhotosByAlbumId(photos) {
           )}
       </CardContent>
     </Card>
+  )
+}
+
+function AddAlbumButton({ disabled }) {
+  return (
+    <Button
+      component={Link}
+      to={ALBUMS + '/new'}
+      disabled={disabled}
+      variant="contained" color="primary"
+      aria-label="add data"
+    >
+      Add
+    </Button>
+  )
+}
+
+function EditAlbumButton({ id }) {
+  return (
+    <Button
+      component={Link}
+      to={ALBUMS + `/edit/${id}`}
+      variant="contained" color="primary"
+      aria-label="edit data"
+    >
+      Edit
+    </Button>
+  )
+}
+
+function DeleteAlbumButton({ id, deleteAlbum, handleChangePage }) {
+  return (
+    <Button
+      onClick={(event) => {
+        deleteAlbum(id);
+        handleChangePage(event, -1)
+      }}
+      variant="contained" color="secondary"
+      aria-label="delete data"
+    >
+      Delete
+    </Button>
   )
 }

@@ -6,20 +6,11 @@ export function createRestApiActions(baseActionType, api) {
   const updateAction = createRequestAction(baseActionType + '/UPDATE', item => api.update(item));
   const deleteAction = createRequestAction(baseActionType + '/DELETE', item => api.delete(item));
 
-  //не используется
-  const selectAction = createRequestAction(baseActionType + '/SELECT', item => api.getAlbumsByUserId(item));
-
-  const deleteAllAlbumsAction = createRequestAction(baseActionType + '/DELETE_ALL', item => api.deleteAlbumsByUserId(item));
-  const deleteAllPhotosAction = createRequestAction(baseActionType + '/DELETE_ALL', item => api.deletePhotosByAlbumId(item));
-
 
   return {
     getAll: getAllAction,
     create: createAction,
     update: updateAction,
-    delete: deleteAction,
-    select: selectAction,
-    deleteAllAlbums: deleteAllAlbumsAction,
-    deleteAllPhotos: deleteAllPhotosAction
+    delete: deleteAction
   };
 }
